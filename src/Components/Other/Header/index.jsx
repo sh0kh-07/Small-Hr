@@ -3,7 +3,7 @@ import {
     Button,
 } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
-import Logo from '../../../Images/Logo.png'
+import Logo from '../../../images/Logo.png'
 import { NavLink } from "react-router-dom";
 
 export default function Header() {
