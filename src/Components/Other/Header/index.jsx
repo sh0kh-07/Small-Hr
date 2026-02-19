@@ -25,7 +25,7 @@ export default function Header() {
                     {/* Логотип слева */}
                     <NavLink to={'/'}>
                         <div className="flex items-center gap-2">
-                            <img className="w-[150px]" src={Logo} alt="" />
+                            <img className="w-[120px]" src={Logo} alt="" />
                         </div>
                     </NavLink>
                     <div className="flex items-center gap-3">

@@ -4,6 +4,11 @@ import { ROLES } from '../permissions/roles';
 export const ROUTES = [
     {
         path: '/',
+        component: lazy(() => import('../../Components/Common/FirstPage')),
+        roles: null, 
+    },
+    {
+        path: '/home',
         component: lazy(() => import('../../Components/Common/Home')),
         roles: null, 
     },

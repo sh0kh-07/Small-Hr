@@ -1,52 +1,37 @@
 import { Card, CardBody, Typography } from "@material-tailwind/react";
 import { NavLink } from "react-router-dom";
 
-export default function Home() {
+export default function FirstPage() {
     const categories = [
         {
             id: 1,
-            name: "Restoranlar",
-            image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            name: "Maxsulotlar, xizmatlar",
+            image: "https://cdn.xabardor.uz/media/photo/2022/10/20/news_photo-20221031-145815.webp",
         },
         {
             id: 2,
-            name: "To'yxonalar",
-            image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            name: "Tashkilot telefon raqamlari",
+            image: "https://static.norma.uz/images/143805_f5156eca3559181dd4f4c0d08782.png",
         },
         {
             id: 3,
-            name: "Kafelar",
+            name: "Reklama maydoni",
             image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
         },
         {
             id: 5,
-            name: "Mehmonxonalar",
-            image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            name: "Ish bandligi",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR35OH5E5A3yMzKZanIkruRX5ZZ0PVnU_3gAQ&s",
         },
-        {
-            id: 6,
-            name: "Go'zallik salonlari",
-            image: "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        },
-        {
-            id: 7,
-            name: "Sport klublari",
-            image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        },
-        {
-            id: 8,
-            name: "Dorixonalar",
-            image: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        }
     ];
 
     return (
         <div className="min-h-screen bg-gradient-to-br pt-24 pb-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Kategoriyalar grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
                     {categories.map((category) => (
-                        <NavLink to={`/page`} key={category.id}>
+                        <NavLink to={`/home`} key={category.id}>
                             <Card
                                 className="group relative overflow-hidden cursor-pointer transform transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border-0"
                             >
@@ -61,10 +46,10 @@ export default function Home() {
                                     <div className="absolute inset-0 bg-[#2626267c] group-hover:opacity-90 group-hover:bg-[#0000000f] transition-opacity duration-500" />
                                 </div>
                                 {/* Content - с адаптивной высотой */}
-                                <CardBody className="relative z-10 text-center p-4 sm:p-8 min-h-[150px] xs:min-h-[200px] sm:min-h-[260px] md:min-h-[280px] flex flex-col items-center justify-center">
+                                <CardBody className="relative z-10 text-center p-4 sm:p-8 min-h-[150px] sm:min-h-[280px] flex flex-col items-center justify-center">
                                     <Typography
                                         variant="h2"
-                                        className="font-bold !text-white relative z-[1000] mb-2 text-shadow-lg text-[25px] xs:text-lg sm:text-2xl lg:text-4xl"
+                                        className="font-bold !text-white relative z-[1000] mb-2 text-shadow-lg text-lg sm:text-2xl lg:text-4xl"
                                     >
                                         {category.name}
                                     </Typography>
