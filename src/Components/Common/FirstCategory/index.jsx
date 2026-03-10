@@ -12,7 +12,7 @@ import {
     DialogBody,
     DialogFooter,
 } from "@material-tailwind/react";
-import { Plus, Trash2, UserPlus, MapPin, Phone, PhoneOff, PhoneMissed, Minus, Edit2, AlertCircle, RefreshCw } from "lucide-react";
+import { Plus, Trash2, UserPlus, MapPin, Phone, PhoneOff, PhoneMissed, Minus, Edit2, AlertCircle, RefreshCw, CheckCircle, XCircle, WifiOff, Smartphone, PhoneCall } from "lucide-react";
 
 export default function FirstCategory() {
     // Инициализация из LocalStorage или пустой массив
@@ -100,10 +100,11 @@ export default function FirstCategory() {
                         {
                             id: Date.now().toString(),
                             name: regionName.trim(),
-                            answered: 0,
-                            notAnswered: 0,
-                            notWorking: 0,
-                            changedNumber: 0 // 4-й критерий
+                            ishlaypti: 0,        // Ishlaypti
+                            ishlamaydi: 0,        // ISHLAMAYDI
+                            kotarmadi: 0,         // KO'TARMADI
+                            raqamOzgartirdi: 0,   // RAQAM O'ZGARTIRDI
+                            raqamIshlamapti: 0    // Raqam ishlamapti
                         }
                     ]
                 };
@@ -125,7 +126,8 @@ export default function FirstCategory() {
         }));
     };
 
-    const updateStat = (workerId, regionId, field, amount) => {
+    const updateStat = (workerId, regionId, field, value) => {
+        const numValue = parseInt(value) || 0;
         setWorkers(workers.map(w => {
             if (w.id === workerId) {
                 return {
@@ -134,7 +136,7 @@ export default function FirstCategory() {
                         if (r.id === regionId) {
                             return {
                                 ...r,
-                                [field]: Math.max(0, (r[field] || 0) + amount) // Не даем уйти в минус
+                                [field]: Math.max(0, numValue) // Не даем уйти в минус
                             };
                         }
                         return r;
@@ -278,70 +280,96 @@ export default function FirstCategory() {
                                                         <Trash2 className="h-4 w-4" />
                                                     </IconButton>
                                                 </div>
-                                                <div className="p-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                                <div className="p-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
 
-                                                    {/* Подняли */}
-                                                    <div className="flex flex-col items-center justify-between p-2 rounded-lg bg-green-50/50 border border-green-100">
-                                                        <Typography className="text-green-700 text-[10px] sm:text-xs font-bold mb-2 flex flex-col items-center gap-1 text-center">
-                                                            <Phone className="h-3 w-3" /> KO'TARDI
+                                                    {/* Ishlaypti */}
+                                                    <div className="flex flex-col items-center p-3 rounded-lg bg-green-50/50 border border-green-100">
+                                                        <Typography className="text-green-700 text-xs font-bold mb-3 flex items-center gap-1">
+                                                            <CheckCircle className="h-4 w-4" /> ISHLAYPTI
                                                         </Typography>
-                                                        <div className="flex items-center gap-2 w-full justify-between sm:justify-center">
-                                                            <IconButton size="sm" variant="outlined" color="green" onClick={() => updateStat(worker.id, region.id, 'answered', -1)} className="rounded-full h-7 w-7">
-                                                                <Minus className="h-3 w-3" />
-                                                            </IconButton>
-                                                            <Typography variant="h6" color="green" className="w-6 text-center">{region.answered}</Typography>
-                                                            <IconButton size="sm" variant="gradient" color="green" onClick={() => updateStat(worker.id, region.id, 'answered', 1)} className="rounded-full h-7 w-7 shadow-none">
-                                                                <Plus className="h-3 w-3" />
-                                                            </IconButton>
-                                                        </div>
+                                                        <Input
+                                                            type="number"
+                                                            min="0"
+                                                            value={region.ishlaypti}
+                                                            onChange={(e) => updateStat(worker.id, region.id, 'ishlaypti', e.target.value)}
+                                                            className="w-full text-center"
+                                                            label="Soni"
+                                                            containerProps={{
+                                                                className: "min-w-0",
+                                                            }}
+                                                        />
                                                     </div>
 
-                                                    {/* Не подняли */}
-                                                    <div className="flex flex-col items-center justify-between p-2 rounded-lg bg-orange-50/50 border border-orange-100">
-                                                        <Typography className="text-orange-700 text-[10px] sm:text-xs font-bold mb-2 flex flex-col items-center gap-1 text-center">
-                                                            <PhoneMissed className="h-3 w-3" /> KO'TARMADI
+                                                    {/* ISHLAMAYDI */}
+                                                    <div className="flex flex-col items-center p-3 rounded-lg bg-red-50/50 border border-red-100">
+                                                        <Typography className="text-red-700 text-xs font-bold mb-3 flex items-center gap-1">
+                                                            <XCircle className="h-4 w-4" /> ISHLAMAYDI
                                                         </Typography>
-                                                        <div className="flex items-center gap-2 w-full justify-between sm:justify-center">
-                                                            <IconButton size="sm" variant="outlined" color="orange" onClick={() => updateStat(worker.id, region.id, 'notAnswered', -1)} className="rounded-full h-7 w-7">
-                                                                <Minus className="h-3 w-3" />
-                                                            </IconButton>
-                                                            <Typography variant="h6" color="orange" className="w-6 text-center">{region.notAnswered}</Typography>
-                                                            <IconButton size="sm" variant="gradient" color="orange" onClick={() => updateStat(worker.id, region.id, 'notAnswered', 1)} className="rounded-full h-7 w-7 shadow-none">
-                                                                <Plus className="h-3 w-3" />
-                                                            </IconButton>
-                                                        </div>
+                                                        <Input
+                                                            type="number"
+                                                            min="0"
+                                                            value={region.ishlamaydi}
+                                                            onChange={(e) => updateStat(worker.id, region.id, 'ishlamaydi', e.target.value)}
+                                                            className="w-full text-center"
+                                                            label="Soni"
+                                                            containerProps={{
+                                                                className: "min-w-0",
+                                                            }}
+                                                        />
                                                     </div>
 
-                                                    {/* Не работает */}
-                                                    <div className="flex flex-col items-center justify-between p-2 rounded-lg bg-red-50/50 border border-red-100">
-                                                        <Typography className="text-red-700 text-[10px] sm:text-xs font-bold mb-2 flex flex-col items-center gap-1 text-center">
-                                                            <PhoneOff className="h-3 w-3" /> ISHLAMAYDI
+                                                    {/* KO'TARMADI */}
+                                                    <div className="flex flex-col items-center p-3 rounded-lg bg-orange-50/50 border border-orange-100">
+                                                        <Typography className="text-orange-700 text-xs font-bold mb-3 flex items-center gap-1">
+                                                            <PhoneMissed className="h-4 w-4" /> KO'TARMADI
                                                         </Typography>
-                                                        <div className="flex items-center gap-2 w-full justify-between sm:justify-center">
-                                                            <IconButton size="sm" variant="outlined" color="red" onClick={() => updateStat(worker.id, region.id, 'notWorking', -1)} className="rounded-full h-7 w-7">
-                                                                <Minus className="h-3 w-3" />
-                                                            </IconButton>
-                                                            <Typography variant="h6" color="red" className="w-6 text-center">{region.notWorking}</Typography>
-                                                            <IconButton size="sm" variant="gradient" color="red" onClick={() => updateStat(worker.id, region.id, 'notWorking', 1)} className="rounded-full h-7 w-7 shadow-none">
-                                                                <Plus className="h-3 w-3" />
-                                                            </IconButton>
-                                                        </div>
+                                                        <Input
+                                                            type="number"
+                                                            min="0"
+                                                            value={region.kotarmadi}
+                                                            onChange={(e) => updateStat(worker.id, region.id, 'kotarmadi', e.target.value)}
+                                                            className="w-full text-center"
+                                                            label="Soni"
+                                                            containerProps={{
+                                                                className: "min-w-0",
+                                                            }}
+                                                        />
                                                     </div>
 
-                                                    {/* Измененный номер */}
-                                                    <div className="flex flex-col items-center justify-between p-2 rounded-lg bg-blue-50/50 border border-blue-100">
-                                                        <Typography className="text-blue-700 text-[10px] sm:text-xs font-bold mb-2 flex flex-col items-center gap-1 text-center">
-                                                            <RefreshCw className="h-3 w-3" /> RAQAM O'ZGARTIRDI
+                                                    {/* RAQAM O'ZGARTIRDI */}
+                                                    <div className="flex flex-col items-center p-3 rounded-lg bg-blue-50/50 border border-blue-100">
+                                                        <Typography className="text-blue-700 text-xs font-bold mb-3 flex items-center gap-1">
+                                                            <RefreshCw className="h-4 w-4" /> RAQAM O'ZGARTIRDI
                                                         </Typography>
-                                                        <div className="flex items-center gap-2 w-full justify-between sm:justify-center">
-                                                            <IconButton size="sm" variant="outlined" color="blue" onClick={() => updateStat(worker.id, region.id, 'changedNumber', -1)} className="rounded-full h-7 w-7">
-                                                                <Minus className="h-3 w-3" />
-                                                            </IconButton>
-                                                            <Typography variant="h6" color="blue" className="w-6 text-center">{region.changedNumber || 0}</Typography>
-                                                            <IconButton size="sm" variant="gradient" color="blue" onClick={() => updateStat(worker.id, region.id, 'changedNumber', 1)} className="rounded-full h-7 w-7 shadow-none">
-                                                                <Plus className="h-3 w-3" />
-                                                            </IconButton>
-                                                        </div>
+                                                        <Input
+                                                            type="number"
+                                                            min="0"
+                                                            value={region.raqamOzgartirdi || 0}
+                                                            onChange={(e) => updateStat(worker.id, region.id, 'raqamOzgartirdi', e.target.value)}
+                                                            className="w-full text-center"
+                                                            label="Soni"
+                                                            containerProps={{
+                                                                className: "min-w-0",
+                                                            }}
+                                                        />
+                                                    </div>
+
+                                                    {/* Raqam ishlamapti */}
+                                                    <div className="flex flex-col items-center p-3 rounded-lg bg-purple-50/50 border border-purple-100">
+                                                        <Typography className="text-purple-700 text-xs font-bold mb-3 flex items-center gap-1">
+                                                            <WifiOff className="h-4 w-4" /> RAQAM ISHLAMAPTI
+                                                        </Typography>
+                                                        <Input
+                                                            type="number"
+                                                            min="0"
+                                                            value={region.raqamIshlamapti || 0}
+                                                            onChange={(e) => updateStat(worker.id, region.id, 'raqamIshlamapti', e.target.value)}
+                                                            className="w-full text-center"
+                                                            label="Soni"
+                                                            containerProps={{
+                                                                className: "min-w-0",
+                                                            }}
+                                                        />
                                                     </div>
 
                                                 </div>
