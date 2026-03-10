@@ -223,14 +223,14 @@ export default function FirstCategory() {
                 </DialogFooter>
             </Dialog>
 
-            <div className="grid grid-cols-1 gap-6">
+            <div className="flex items-center gap-6 flex-col">
                 {workers.length === 0 ? (
                     <Typography className="text-center text-gray-400 py-12 italic border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/50">
                         Hozircha operatorlar qo'shilmagan.
                     </Typography>
                 ) : (
                     workers.map(worker => (
-                        <Card key={worker.id} className="w-full shadow-lg border border-blue-gray-50 bg-white">
+                        <Card key={worker.id} className="w-full shadow-lg border border-blue-gray-50 bg-white ">
                             <CardHeader color="transparent" shadow={false} className="m-0 p-4 border-b border-gray-100 flex justify-between items-center rounded-none bg-blue-gray-50/50">
                                 <Typography variant="h6" color="blue-gray" className="flex items-center gap-2">
                                     <UserPlus className="h-5 w-5 text-blue-500" />
@@ -268,7 +268,7 @@ export default function FirstCategory() {
                                         Viloyatlar yo'q. Ushbu operator uchun birinchi viloyatni qo'shing.
                                     </Typography>
                                 ) : (
-                                    <div className="flex flex-col gap-4 mt-2 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200">
+                                    <div className="flex flex-col gap-4 mt-2 max-h-[1200px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200">
                                         {worker.regions.map(region => (
                                             <Card key={region.id} className="border border-gray-200 shadow-sm overflow-hidden bg-white">
                                                 <div className="bg-gray-50/80 p-3 flex justify-between items-center border-b border-gray-200">
