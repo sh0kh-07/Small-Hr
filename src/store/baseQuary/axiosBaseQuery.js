@@ -1,8 +1,8 @@
 import $api from "../api";
 
-export const axiosBaseQuery = () => async ({ url, method, data }) => {
+export const axiosBaseQuery = () => async ({ url, method, data, headers }) => {
     try {
-        const result = await $api({ url, method, data });
+        const result = await $api({ url, method, data, headers });
         return { data: result.data };
     } catch (axiosError) {
         let err = axiosError;

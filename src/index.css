@@ -60,3 +60,39 @@ input[type="number"]::-webkit-inner-spin-button {
   gap: 30px;
   padding: 18px 0px !important;
 }
+
+.rich-text-content {
+  line-height: 1.6;
+  color: #374151; /* gray-700 */
+}
+
+.rich-text-content p {
+  margin-bottom: 0.5rem;
+}
+
+.rich-text-content ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.rich-text-content ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.rich-text-content strong {
+  font-weight: 700;
+  color: #111827; /* gray-900 */
+}
+
+.rich-text-content em {
+  font-style: italic;
+}
+
+.rich-text-content h1, .rich-text-content h2, .rich-text-content h3 {
+  font-weight: 700;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}

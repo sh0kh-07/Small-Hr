@@ -1,0 +1,93 @@
+import React, { useState } from "react";
+import {
+    Button,
+    Dialog,
+    DialogHeader,
+    DialogBody,
+    DialogFooter,
+    Input,
+    Typography,
+} from "@material-tailwind/react";
+import { useCreateCategoryMutation } from "../../../../store/services/category.api";
+import { Alert } from "../../../Other/UI/Alert/Alert";
+
+export function CategoryCreateModal({ open, handleOpen }) {
+    const [title, setTitle] = useState("");
+    const [image, setImage] = useState(null);
+    const [createCategory, { isLoading }] = useCreateCategoryMutation();
+
+    const handleFileChange = (e) => {
+        setImage(e.target.files[0]);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!title || !image) {
+            Alert("Iltimos, barcha maydonlarni to'ldiring", "error");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("image", image);
+
+        try {
+            await createCategory(formData).unwrap();
+            Alert("Kategoriya muvaffaqiyatli yaratildi", "success");
+            setTitle("");
+            setImage(null);
+            handleOpen();
+        } catch (err) {
+            Alert(err.data?.message || "Xatolik yuz berdi", "error");
+        }
+    };
+
+    return (
+        <Dialog open={open} handler={handleOpen} size="sm" className="rounded-2xl">
+            <form onSubmit={handleSubmit}>
+                <DialogHeader className="flex flex-col items-start gap-1">
+                    <Typography variant="h4" color="blue-gray">
+                        Yangi kategoriya
+                    </Typography>
+                    <Typography className="text-sm font-normal text-gray-500">
+                        Kategoriya ma'lumotlarini kiriting
+                    </Typography>
+                </DialogHeader>
+                <DialogBody className="flex flex-col gap-6">
+                    <div className="flex flex-col gap-2">
+                        <Typography variant="small" color="blue-gray" className="font-medium">
+                            Kategoriya nomi
+                        </Typography>
+                        <Input
+                            size="lg"
+                            placeholder="Masalan: Elektronika"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <Typography variant="small" color="blue-gray" className="font-medium">
+                            Kategoriya rasmi
+                        </Typography>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all"
+                            required
+                        />
+                    </div>
+                </DialogBody>
+                <DialogFooter className="gap-2">
+                    <Button variant="text" color="red" onClick={handleOpen} disabled={isLoading}>
+                        Bekor qilish
+                    </Button>
+                    <Button variant="gradient" color="blue" type="submit" loading={isLoading}>
+                        Saqlash
+                    </Button>
+                </DialogFooter>
+            </form>
+        </Dialog>
+    );
+}

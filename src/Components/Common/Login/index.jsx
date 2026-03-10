@@ -1,118 +1,117 @@
-import { useState, React } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store/hooks";
 import { setAuth } from "../../../store/slices/auth.slice";
 import { useLoginMutation } from "../../../store/services/auth.api";
+import { Alert } from "../../Other/UI/Alert/Alert";
+import {
+    Card,
+    Input,
+    Button,
+    Typography,
+} from "@material-tailwind/react";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 export default function Login() {
-    const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("+998");
     const [password, setPassword] = useState("");
-    const [login, { isLoading, error }] = useLoginMutation();
+    const [showPassword, setShowPassword] = useState(false);
+
+    const [login, { isLoading }] = useLoginMutation();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const data = await login({ email, password }).unwrap();
-            dispatch(setAuth({ token: data.token, role: data.role }));
-            navigate("/dashboard");
+            const response = await login({ phone, password }).unwrap();
+
+            const { newUser, tokens } = response;
+
+            dispatch(setAuth({
+                access_token: tokens.access_token,
+                refresh_token: tokens.refresh_token,
+                user: newUser
+            }));
+
+            Alert("Tizimga muvaffaqiyatli kirdingiz", "success");
+            navigate("/admin/dashboard");
         } catch (err) {
             console.error("Login failed:", err);
-            alert(err.data?.message || "Ошибка авторизации");
+            Alert(err.data?.message || "Login yoki parol xato", "error");
         }
     };
-
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-            <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 space-y-6">
-                <h2 className="text-2xl font-bold text-gray-800 text-center">
-                    Вход в систему
-                </h2>
+        <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 p-4 font-sans">
+            <Card className="w-full max-w-md p-8 sm:p-10 shadow-xl border border-gray-100 bg-white rounded-2xl">
 
-                <form className="space-y-4" onSubmit={handleSubmit}>
-                    {/* Email */}
-                    <div>
-                        <label className="block text-gray-700 mb-1" htmlFor="email">
-                            Email
-                        </label>
-                        <input
-                            id="email"
-                            type="email"
-                            placeholder="Введите email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                {/* Header */}
+                <div className="mb-8 text-center">
+                    <Typography
+                        variant="h4"
+                        className="font-bold text-gray-800 mb-2"
+                    >
+                        Tizimga kirish
+                    </Typography>
+                    <Typography className="text-sm text-gray-500">
+                        Hisobingizga kirish uchun ma'lumotlarni kiriting
+                    </Typography>
+                </div>
+
+                {/* Form */}
+                <form className="space-y-6" onSubmit={handleSubmit}>
+
+                    {/* Phone */}
+                    <div className="flex flex-col gap-2">
+
+                        <Input
+                            size="lg"
+                            label="Telefon raqami"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
                             required
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                         />
                     </div>
 
                     {/* Password */}
-                    <div>
-                        <label className="block text-gray-700 mb-1" htmlFor="password">
-                            Пароль
-                        </label>
-                        <input
-                            id="password"
-                            type="password"
-                            placeholder="Введите пароль"
+                    <div className="flex flex-col gap-2 relative" >
+                        <Input
+                            type={showPassword ? "text" : "password"}
+                            size="lg"
+                            label="Parol"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                         />
+                        <div
+                            className="absolute right-4 top-3 cursor-pointer text-gray-400 hover:text-black transition-colors"
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            {showPassword ? (
+                                <EyeSlashIcon className="h-5 w-5" />
+                            ) : (
+                                <EyeIcon className="h-5 w-5" />
+                            )}
+                        </div>
                     </div>
 
-                    {/* Submit Button */}
-                    <button
+                    {/* Button */}
+                    <Button
                         type="submit"
+                        size="lg"
+                        fullWidth
+                        className="rounded-xl bg-black text-white hover:bg-gray-800 shadow-md hover:shadow-lg transition-all duration-300 py-3 text-sm font-semibold tracking-wide flex items-center justify-center gap-2"
                         disabled={isLoading}
-                        className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition flex justify-center items-center disabled:opacity-50"
                     >
                         {isLoading ? (
-                            <svg
-                                className="animate-spin h-5 w-5 mr-2 text-white"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                            >
-                                <circle
-                                    className="opacity-25"
-                                    cx="12"
-                                    cy="12"
-                                    r="10"
-                                    stroke="currentColor"
-                                    strokeWidth="4"
-                                ></circle>
-                                <path
-                                    className="opacity-75"
-                                    fill="currentColor"
-                                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                                ></path>
-                            </svg>
-                        ) : null}
-                        {isLoading ? "Вход..." : "Войти"}
-                    </button>
-
-                    {/* Error Message */}
-                    {error && (
-                        <p className="text-red-500 text-sm mt-2 text-center">
-                            {error.data?.message || "Что-то пошло не так"}
-                        </p>
-                    )}
+                            <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                            "Kirish"
+                        )}
+                    </Button>
                 </form>
 
-                {/* Extra Links */}
-                <div className="text-center text-gray-500 text-sm mt-4">
-                    Нет аккаунта?{" "}
-                    <button
-                        onClick={() => navigate("/register")}
-                        className="text-indigo-600 hover:underline font-medium"
-                    >
-                        Зарегистрироваться
-                    </button>
-                </div>
-            </div>
+            </Card>
         </div>
     );
 }
