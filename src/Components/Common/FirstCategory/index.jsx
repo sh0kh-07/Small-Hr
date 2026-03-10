@@ -12,7 +12,8 @@ import {
     DialogBody,
     DialogFooter,
 } from "@material-tailwind/react";
-import { Plus, Trash2, UserPlus, MapPin, Phone, PhoneOff, PhoneMissed, Minus, Edit2, AlertCircle, RefreshCw, CheckCircle, XCircle, WifiOff, Smartphone, PhoneCall } from "lucide-react";
+import { Plus, Trash2, UserPlus, MapPin, Phone, PhoneOff, PhoneMissed, Minus, Edit2, AlertCircle, RefreshCw, CheckCircle, XCircle, WifiOff, Smartphone, PhoneCall, BarChart3, PieChart } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart as RePieChart, Pie, Cell } from 'recharts';
 
 export default function FirstCategory() {
     // Инициализация из LocalStorage или пустой массив
@@ -36,10 +37,48 @@ export default function FirstCategory() {
     const [editWorkerName, setEditWorkerName] = useState("");
     const [newRegionNames, setNewRegionNames] = useState({});
 
+    // Состояние для типа графика
+    const [chartType, setChartType] = useState('bar'); // 'bar' или 'pie'
+
     // Сохранение при каждом изменении workers
     useEffect(() => {
         localStorage.setItem("callWorkersReport", JSON.stringify(workers));
     }, [workers]);
+
+    // Функция для подсчета общей статистики по всем категориям
+    const getTotalStats = () => {
+        let totals = {
+            ishlaypti: 0,
+            ishlamaydi: 0,
+            kotarmadi: 0,
+            raqamOzgartirdi: 0,
+            raqamIshlamapti: 0
+        };
+
+        workers.forEach(worker => {
+            worker.regions.forEach(region => {
+                totals.ishlaypti += region.ishlaypti || 0;
+                totals.ishlamaydi += region.ishlamaydi || 0;
+                totals.kotarmadi += region.kotarmadi || 0;
+                totals.raqamOzgartirdi += region.raqamOzgartirdi || 0;
+                totals.raqamIshlamapti += region.raqamIshlamapti || 0;
+            });
+        });
+
+        return totals;
+    };
+
+    // Подготовка данных для графика
+    const getChartData = () => {
+        const totals = getTotalStats();
+        return [
+            { name: 'Ishlaypti', value: totals.ishlaypti, color: '#22c55e' },
+            { name: 'Ishlamaydi', value: totals.ishlamaydi, color: '#ef4444' },
+            { name: "Ko'tarmadi", value: totals.kotarmadi, color: '#f97316' },
+            { name: "Raqam o'zgartirdi", value: totals.raqamOzgartirdi, color: '#3b82f6' },
+            { name: 'Raqam ishlamapti', value: totals.raqamIshlamapti, color: '#a855f7' }
+        ];
+    };
 
     // Обработчики для Добавления оператора
     const handleOpenAdd = () => setOpenAddModal(!openAddModal);
@@ -147,6 +186,10 @@ export default function FirstCategory() {
         }));
     };
 
+    const totals = getTotalStats();
+    const chartData = getChartData();
+    const totalCalls = Object.values(totals).reduce((a, b) => a + b, 0);
+
     return (
         <div className="mx-auto flex flex-col gap-8">
             <div className="flex justify-between items-center mt-1 p-4 bg-white rounded-xl shadow-sm border border-gray-100">
@@ -157,6 +200,125 @@ export default function FirstCategory() {
                     <UserPlus className="h-4 w-4" /> Operator Qo'shish
                 </Button>
             </div>
+
+            {/* Блок с общей статистикой и графиком */}
+            {workers.length > 0 && workers.some(w => w.regions.length > 0) && (
+                <Card className="w-full shadow-lg border border-blue-gray-50 bg-white">
+                    <CardHeader color="transparent" shadow={false} className="m-0 p-4 border-b border-gray-100 flex justify-between items-center rounded-none bg-blue-gray-50/50">
+                        <Typography variant="h6" color="blue-gray" className="flex items-center gap-2">
+                            <BarChart3 className="h-5 w-5 text-blue-500" />
+                            Umumiy statistika va diagramma
+                        </Typography>
+                        <div className="flex gap-2">
+                            <Button
+                                size="sm"
+                                variant={chartType === 'bar' ? 'gradient' : 'outlined'}
+                                color="blue"
+                                onClick={() => setChartType('bar')}
+                                className="flex items-center gap-1"
+                            >
+                                <BarChart3 className="h-4 w-4" /> Bar
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant={chartType === 'pie' ? 'gradient' : 'outlined'}
+                                color="blue"
+                                onClick={() => setChartType('pie')}
+                                className="flex items-center gap-1"
+                            >
+                                <PieChart className="h-4 w-4" /> Pirog
+                            </Button>
+                        </div>
+                    </CardHeader>
+                    <CardBody className="p-6">
+                        {/* Карточки с общей статистикой */}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+                            <div className="bg-green-50 p-4 rounded-xl border border-green-100 text-center">
+                                <CheckCircle className="h-8 w-8 text-green-500 mx-auto mb-2" />
+                                <Typography className="text-green-700 text-sm font-bold">Ishlaypti</Typography>
+                                <Typography className="text-2xl font-bold text-green-600">{totals.ishlaypti}</Typography>
+                            </div>
+                            <div className="bg-red-50 p-4 rounded-xl border border-red-100 text-center">
+                                <XCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+                                <Typography className="text-red-700 text-sm font-bold">Ishlamaydi</Typography>
+                                <Typography className="text-2xl font-bold text-red-600">{totals.ishlamaydi}</Typography>
+                            </div>
+                            <div className="bg-orange-50 p-4 rounded-xl border border-orange-100 text-center">
+                                <PhoneMissed className="h-8 w-8 text-orange-500 mx-auto mb-2" />
+                                <Typography className="text-orange-700 text-sm font-bold">Ko'tarmadi</Typography>
+                                <Typography className="text-2xl font-bold text-orange-600">{totals.kotarmadi}</Typography>
+                            </div>
+                            <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 text-center">
+                                <RefreshCw className="h-8 w-8 text-blue-500 mx-auto mb-2" />
+                                <Typography className="text-blue-700 text-sm font-bold">Raqam o'zgartirdi</Typography>
+                                <Typography className="text-2xl font-bold text-blue-600">{totals.raqamOzgartirdi}</Typography>
+                            </div>
+                            <div className="bg-purple-50 p-4 rounded-xl border border-purple-100 text-center">
+                                <WifiOff className="h-8 w-8 text-purple-500 mx-auto mb-2" />
+                                <Typography className="text-purple-700 text-sm font-bold">Raqam ishlamapti</Typography>
+                                <Typography className="text-2xl font-bold text-purple-600">{totals.raqamIshlamapti}</Typography>
+                            </div>
+                        </div>
+
+                        {/* График */}
+                        <div className="h-96 w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                {chartType === 'bar' ? (
+                                    <BarChart
+                                        data={chartData}
+                                        margin={{
+                                            top: 20,
+                                            right: 30,
+                                            left: 20,
+                                            bottom: 5,
+                                        }}
+                                    >
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="name" />
+                                        <YAxis />
+                                        <Tooltip />
+                                        <Legend />
+                                        <Bar dataKey="value" fill="#8884d8">
+                                            {chartData.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={entry.color} />
+                                            ))}
+                                        </Bar>
+                                    </BarChart>
+                                ) : (
+                                    <RePieChart>
+                                        <Pie
+                                            data={chartData}
+                                            cx="50%"
+                                            cy="50%"
+                                            labelLine={true}
+                                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                                            outerRadius={130}
+                                            fill="#8884d8"
+                                            dataKey="value"
+                                        >
+                                            {chartData.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={entry.color} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip />
+                                        <Legend />
+                                    </RePieChart>
+                                )}
+                            </ResponsiveContainer>
+                        </div>
+
+                        {/* Общее количество звонков */}
+                        <div className="mt-6 text-center p-4 bg-blue-50 rounded-xl border border-blue-100">
+                            <Typography className="text-blue-700 text-sm font-bold">
+                                Jami qo'ng'iroqlar soni
+                            </Typography>
+                            <Typography className="text-3xl font-bold text-blue-600">
+                                {totalCalls}
+                            </Typography>
+                        </div>
+                    </CardBody>
+                </Card>
+            )}
 
             {/* Модалка Добавления оператора */}
             <Dialog open={openAddModal} handler={handleOpenAdd} size="xs">
